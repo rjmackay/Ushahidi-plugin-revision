@@ -18,35 +18,27 @@ class Revision_Controller extends Main_Controller {
 		parent::__construct();
 	}
 
-	public function index()
+	public function index($id = FALSE)
 	{
 		header("Content-type: text/plain; charset=UTF-8\n");
 		$this->template->this_page = 'revision';
 		$this->template->content = '';
 		
-		foreach(ORM::Factory('revision_incidents')->find_all() as $revision)
+		foreach(ORM::Factory('revision_incident')->find_all() as $revision)
 		{
-			var_dump(unserialize($revision->data));
+			//var_dump(unserialize($revision->data));
+			var_dump($revision);
 		}
 		exit();
 	}
 
-	public function diff($id = 1)
+	public function diff($id)
 	{
 		header("Content-type: text/plain; charset=UTF-8\n");
 		$this->template->this_page = 'revision';
 		$this->template->content = '';
 		
-		if (intval(Router::$arguments[0]))
-		{
-			$id = intval(Router::$arguments[0]);
-		}
-		else
-		{
-			throw new Kohana_Exception();
-		}
-		
-		$revisions = ORM::factory('revision_incidents')->where('incident_id',$id)->orderby('time', 'DESC')->find_all(2,0);
+		$revisions = ORM::factory('revision_incident')->where('incident_id',$id)->orderby('time', 'DESC')->find_all(2,0);
 		
 		$revisions = $revisions->as_array();
 		if (count($revisions) > 0)

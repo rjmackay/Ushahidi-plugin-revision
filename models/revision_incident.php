@@ -6,30 +6,54 @@
  * @package    Version Categories Plugin
  */
 
-class Revision_incidents_Model extends ORM {
+class Revision_incident_Model extends ORM {
 	// Database table name
-	protected $table_name = 'revision_incidents';
-
-	/**
-	 * One-to-one relationship definition
-	 * @var array
-	 */
-	protected $has_one = array('verify');
+	protected $table_name = 'revision_incident';
 
 	/**
 	 * Many-to-one relationship definition
 	 * @var array
 	 */
-	protected $belongs_to = array('incident');
+	protected $belongs_to = array('incident','user');
 
 	/*
 	 * Diff this revision against a previous one
 	 */
-	public function diff(Revision_incidents_Model $prev_revision, $ignore_date_and_null = TRUE)
+	public function diff(Revision_incident_Model $prev_revision, $ignore_date = TRUE)
 	{
 		$data_this = unserialize($this->data);
 		$data_prev = unserialize($prev_revision->data);
 		return $this->array_diff_assoc_recursive($data_this,$data_prev);
+	}
+	
+	public function data()
+	{
+		$data = @unserialize($this->data);
+		return $data ? $data : FALSE;
+	}
+	
+	public function changed_data()
+	{
+		$changed = @unserialize($this->changed_data);
+		return $changed ? $changed : FALSE;
+	}
+	
+	public function changed_data_str()
+	{
+		if ($this->changed_data())
+		{
+			return implode(', ',array_keys($this->changed_data()));
+		}
+		return FALSE;
+	}
+	
+	public function __toString()
+	{
+		$line = '';
+		$line .= isset($this->user_id) ? Kohana::lang('ui_admin.edited_by')." ".$this->user->name." : " : '';
+		$line .= $this->changed_data() ? Kohana::lang('revision.changed_fields')." ".$this->changed_data_str(). " " : '';
+		$line .= "(" .$this->time. ")";
+		return $line;
 	}
 
 	/*

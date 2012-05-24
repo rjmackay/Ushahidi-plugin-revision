@@ -23,13 +23,13 @@ class Revision_Install {
 	{
 		// Create the database tables.
 		// Also include table_prefix in name
-		$this->db->query('CREATE TABLE IF NOT EXISTS `'.Kohana::config('database.default.table_prefix').'revision_incidents` (
+		$this->db->query('CREATE TABLE IF NOT EXISTS `'.Kohana::config('database.default.table_prefix').'revision_incident` (
 					`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					`incident_id` bigint(20) unsigned NOT NULL,
-					`verified_id` bigint(20) unsigned NULL,
+					`user_id` int(11) unsigned NULL,
 					`time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					`changed` BLOB NOT NULL,
-					`data` BLOB NOT NULL,
+					`changed_data` BLOB NULL COMMENT \'Serialized array of changed fields\',
+					`data` BLOB NOT NULL COMMENT \'Serialized array of incident data\',
 					PRIMARY KEY (`id`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1');
 
