@@ -25,8 +25,18 @@ class revision {
 	 */
 	public function add()
 	{
-		Event::add('ushahidi_action.report_submit', array($this, '_save_data'));
-		Event::add('ushahidi_action.report_submit_admin', array($this, '_save_data'));
+		Event::add('ushahidi_action.report_edit', array($this, '_save_data'));
+		Event::add('ushahidi_action.report_add', array($this, '_save_data'));
+		Event::add('ushahidi_action.config_routes', array($this, '_routes'));
+	}
+	
+	/*
+	 * Modify custom routes
+	 */
+	public function _routes()
+	{
+		// Add custom routing for appcache file
+		//Event::$data['revision/diff/([0-9]+)'] = 'revision/diff/$1';
 	}
 	
 	/**
@@ -36,7 +46,12 @@ class revision {
 	{
 		//pull the data from the event
 		$incident = Event::$data;
-		$id = $incident->id;
+		
+		// Get previous revision
+		$prev_revision = ORM::factory('revision_incidents')->where('incident_id',$incident->id)->orderby('time','DESC')->find(1,0);
+		
+		// Get current verified entry
+		$verified = ORM::factory('verify')->where('incident_id',$incident->id)->orderby('verified_date','DESC')->find(1,0);
 		
 		$data = $incident->as_array();
 		$data['location'] = $incident->location->as_array();
@@ -63,6 +78,16 @@ class revision {
 		$revision = ORM::factory('revision_incidents');
 		$revision->incident_id = $incident->id;
 		$revision->data = serialize($data);
+		
+		// Saved verified id if present
+		if ($verified->loaded)
+		{
+			$revision->verified_id = $verified->id;
+		}
+		
+		// Save the diff from previous version
+		$revision->changed = serialize($revision->diff($prev_revision));
+		
 		$revision->save();
 	}//end _save_data
 }

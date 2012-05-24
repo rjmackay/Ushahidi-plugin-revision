@@ -28,8 +28,8 @@ class Revision_Install {
 					`incident_id` bigint(20) unsigned NOT NULL,
 					`verified_id` bigint(20) unsigned NULL,
 					`time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					`fields_changed` VARCHAR(255) NOT NULL DEFAULT \'\',
-					`data` BLOB NOT NULL DEFAULT \'\',
+					`changed` BLOB NOT NULL,
+					`data` BLOB NOT NULL,
 					PRIMARY KEY (`id`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1');
 
