@@ -1,17 +1,15 @@
 === About ===
-name: Version Categories
-website: https://github.com/jetherton/versioncategories
-description: Creates a record of what categories where applied to what incients when
+name: Revisions
+website: https://github.com/rjmackay/Ushahidi-plugin-revision
+description: Creates a record of what changed in a report when
 version: 1.0
-requires: 2.1
-tested up to: 2.1
-author: John Etherton
-author website: http://johnetherton.com
+requires: 2.4
+tested up to: 2.4
+author: Robbie Mackay
+author website: http://robbiemackay.com
 
 == Description ==
-This will create a table that tracks when categories where added to and removed from
-incidents. This way you can have timelines that track how a category was applied to
-incidents
+This will create a table that tracks a history of report changes
 
 == Installation ==
 1. Copy the entire /versioncategories/ directory into your /plugins/ directory.
