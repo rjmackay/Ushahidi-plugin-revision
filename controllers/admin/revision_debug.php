@@ -12,7 +12,7 @@
  * @license    http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (LGPL)
  */
 
-class Revision_Controller extends Main_Controller {
+class Revision_debug_Controller extends Admin_Controller {
 	public function __construct()
 	{
 		parent::__construct();
@@ -26,8 +26,8 @@ class Revision_Controller extends Main_Controller {
 		
 		foreach(ORM::Factory('revision_incident')->find_all() as $revision)
 		{
-			//var_dump(unserialize($revision->data));
-			var_dump($revision);
+			var_dump(unserialize($revision->data));
+			//var_dump($revision);
 		}
 		exit();
 	}

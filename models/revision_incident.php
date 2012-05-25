@@ -19,7 +19,7 @@ class Revision_incident_Model extends ORM {
 	/*
 	 * Diff this revision against a previous one
 	 */
-	public function diff(Revision_incident_Model $prev_revision, $ignore_date = TRUE)
+	public function diff(Revision_incident_Model $prev_revision)
 	{
 		$data_this = unserialize($this->data);
 		$data_prev = unserialize($prev_revision->data);
@@ -32,9 +32,45 @@ class Revision_incident_Model extends ORM {
 		return $data ? $data : FALSE;
 	}
 	
-	public function changed_data()
+	public function changed_data($ignore_date_and_id = TRUE)
 	{
 		$changed = @unserialize($this->changed_data);
+		
+		if ($ignore_date_and_id)
+		{
+			unset($changed['incident_datemodify']);
+			if (isset($changed['location']))
+			{
+				unset($changed['location']['location_date']);
+				if (count($changed['location']) == 0)
+					unset($changed['location']);
+			}
+			
+			if (isset($changed['incident_person']))
+			{
+				unset($changed['incident_person']['id']);
+				unset($changed['incident_person']['person_date']);
+				if (count($changed['incident_person']) == 0)
+					unset($changed['incident_person']);
+			}
+
+			if (isset($changed['media']))
+			{
+				foreach ($changed['media'] as $k => $m)
+				{
+					unset($changed['media'][$k]['media_date']);
+					unset($changed['media'][$k]['id']);
+					if (count($changed['media'][$k]) == 0)
+						unset($changed['media'][$k]);
+				}
+				if (count($changed['media'] == 0))
+					unset($changed['media']);
+			}
+			
+			if (count($changed) == 0)
+				$changed = FALSE;
+		}
+		
 		return $changed ? $changed : FALSE;
 	}
 	
@@ -50,7 +86,7 @@ class Revision_incident_Model extends ORM {
 	public function __toString()
 	{
 		$line = '';
-		$line .= isset($this->user_id) ? Kohana::lang('ui_admin.edited_by')." ".$this->user->name." : " : '';
+		$line .= isset($this->user_id) ? Kohana::lang('ui_admin.edited_by')." ".$this->user->name.". " : '';
 		$line .= $this->changed_data() ? Kohana::lang('revision.changed_fields')." ".$this->changed_data_str(). " " : '';
 		$line .= "(" .$this->time. ")";
 		return $line;

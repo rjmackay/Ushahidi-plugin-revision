@@ -2,5 +2,5 @@
 
 $lang = array
 (
-	'changed_fields' => 'changed fields',
+	'changed_fields' => 'Changed: ',
 );
