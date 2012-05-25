@@ -25,9 +25,15 @@ class revision {
 	 */
 	public function add()
 	{
+		/*
 		Event::add('ushahidi_action.report_edit', array($this, '_save_data'));
 		Event::add('ushahidi_action.report_add', array($this, '_save_data'));
-		Event::add('ushahidi_action.config_routes', array($this, '_routes'));
+		Event::add('ushahidi_action.report_approve', array($this, '_save_data'));
+		Event::add('ushahidi_action.report_unapprove', array($this, '_save_data'));
+		*/
+		
+		// Hook on custom save event instead
+		Event::add('ushahidi_action.report_save', array($this, '_save_data'));
 	}
 	
 	/**

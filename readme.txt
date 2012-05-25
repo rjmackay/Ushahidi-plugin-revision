@@ -46,4 +46,17 @@ This will create a table that tracks a history of report changes
 				'revision_incidents'
 			);
 
+   Also add this function at the end of the class
+			/**
+			 * Overrides the default save method for the ORM.
+			 * 
+			 */
+			public function save()
+			{
+				// Fire an event on every save
+				Event::run('ushahidi_action.report_save', $this);
+				
+				parent::save();
+			}
+
 == Changelog ==
