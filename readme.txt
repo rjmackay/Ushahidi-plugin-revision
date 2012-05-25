@@ -14,12 +14,18 @@ This will create a table that tracks a history of report changes
 == Installation ==
 1. Copy the entire /versioncategories/ directory into your /plugins/ directory.
 2. Activate the plugin.
-3. Edit application/views/admin/reports and remove these lines:
+3. Edit application/views/admin/reports and change these lines:
+   Replace:
+			$edit_count = $incident_orm->verify->count();
+   With:
+			$edit_count = $incident_orm->revision_incidents->count();
+
+   Replace:
 			foreach ($incident_orm->verify as $verify)
 			{
 				$edit_log .= "<li>".Kohana::lang('ui_admin.edited_by')." ".$verify->user->name." : ".$verify->verified_date."</li>";
 			}
-   Replace them with these lines:
+   With:
 			foreach ($incident_orm->revision_incidents as $revision)
 			{
 				$edit_log .= "<li>$revision</li>";
