@@ -70,7 +70,10 @@ class revision {
 		$revision = ORM::factory('revision_incident');
 		$revision->incident_id = $incident->id;
 		$revision->data = serialize($data);
-		$revision->user_id = Auth::instance()->get_user()->id;
+		if (Auth::instance()->get_user() instanceof User_Model)
+		{
+			$revision->user_id = Auth::instance()->get_user()->id;
+		}
 		
 		// Get previous revision
 		$prev_revision = ORM::factory('revision_incident')->where('incident_id',$incident->id)->orderby('time','DESC')->find();
