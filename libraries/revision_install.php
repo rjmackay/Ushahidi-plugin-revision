@@ -30,8 +30,20 @@ class Revision_Install {
 					`time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					`changed_data` BLOB NULL COMMENT \'Serialized array of changed fields\',
 					`data` BLOB NOT NULL COMMENT \'Serialized array of incident data\',
-					PRIMARY KEY (`id`)
+					`verified_id` bigint(20) unsigned NULL,
+					PRIMARY KEY (`id`),
+					UNIQUE KEY `verified_id` (`verified_id`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1');
+		
+		// Copy verify
+		if (ORM::factory('revision_incident')->count_all() == 0)
+		{
+			$this->db->query('
+				INSERT INTO `'.Kohana::config('database.default.table_prefix').'revision_incident` 
+					(`incident_id`, `user_id`, `time`, `changed_data`, `data`, `verified_id`)
+					SELECT `incident_id`, `user_id`, `verified_date`, "a:0:{}", "a:0:{}", `verified`.`id` FROM `'.Kohana::config('database.default.table_prefix').'verified`;
+			');
+		}
 
 	}
 

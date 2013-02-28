@@ -34,6 +34,13 @@ class revision {
 		
 		// Hook on custom save event instead
 		Event::add('ushahidi_action.report_save', array($this, '_save_data'));
+		
+		// Only add the events if we are on that controller
+		if (Router::$controller == 'reports' AND Router::$method == 'index')
+		{
+			Event::add('ushahidi_action.report_extra_admin', array($this, 'report_extra_admin'));
+			Event::add('ushahidi_action.header_scripts', array($this, 'header_scripts'));
+		}
 	}
 	
 	/**
@@ -86,6 +93,46 @@ class revision {
 		
 		$revision->save();
 	}//end _save_data
+	
+	/**
+	 * Add styles to hide default edit logs
+	 */
+	public function header_scripts()
+	{
+		echo "
+			<style>
+				.post-edit-log-blue, .post-edit-log-gray {display: none;}
+				.post-edit-log-blue.revision-log, .post-edit-log-gray.revision-log {display: block;}
+			</style>
+		";
+	}
+	
+	/**
+	 * Generate revision log
+	 */
+	public function report_extra_admin()
+	{
+		$incident = Event::$data;
+		$incident_id = $incident->incident_id;
+		
+		// Get Edit Log
+		$revisions = ORM::factory('revision_incident')->where('incident_id', $incident_id)->orderby('time','DESC')->find_all();
+		$edit_count = $revisions->count();
+		$edit_css = ($edit_count == 0) ? "post-edit-log-gray" : "post-edit-log-blue";
+		
+		$edit_log = "";
+		$edit_log .= "<div class=\"revision-log ".$edit_css."\">"
+			. "<a href=\"javascript:showLog('revision_log_".$incident_id."')\">".Kohana::lang('ui_admin.edit_log').":</a> (".$edit_count.")</div>"
+			. "<div id=\"revision_log_".$incident_id."\" class=\"post-edit-log\"><ul>";
+		
+		foreach ($revisions as $revision)
+		{
+			$edit_log .= "<li>$revision</li>";
+		}
+		$edit_log .= "</ul><a href='". url::site('admin/reports/revision/diff/'.$incident_id)."'>Full revision log</a></div>";
+		
+		echo $edit_log;
+	}
 }
 
 new revision;
